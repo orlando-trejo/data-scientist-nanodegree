@@ -1,6 +1,6 @@
 import sys
 import pandas as pd
-
+from sqlalchemy import create_engine
 
 def load_data(messages_filepath, categories_filepath):
     # load messages dataset
@@ -38,7 +38,8 @@ def clean_data(df):
     return df
 
 def save_data(df, database_filename):
-    pass
+    engine = create_engine('sqlite:///{}'.format(database_filename))
+    df.to_sql('disaster_response', engine, index=False, if_exists='replace')
 
 
 def main():
