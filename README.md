@@ -1,2 +1,2 @@
 # data-scientist-nanodegree
-This repository contains projects from Udacity's Data Scientist Nanodegree. 
+This repository contains projects for Udacity's Data Scientist Nanodegree. 
