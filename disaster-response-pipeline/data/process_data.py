@@ -3,14 +3,39 @@ import pandas as pd
 
 
 def load_data(messages_filepath, categories_filepath):
+    # load messages dataset
     messages = pd.read_csv(messages_filepath)
+    # load categories dataset
     categories = pd.read_csv(categories_filepath)
     return pd.merge(messages, categories, on='id')
 
 
 def clean_data(df):
-    pass
+    # create a dataframe of the 36 individual category columns
+    categories = df.categories.str.split(';', expand=True)
+    # select the first row of the categories dataframe
+    row = categories.iloc[0]
+    # use this row to extract a list of new column names for categories.
+    # one way is to apply a lambda function that takes everything
+    # up to the second to last character of each string with slicing
+    category_colnames = row.apply(lambda x: x[0:-2])
+    # rename the columns of `categories`
+    categories.columns = category_colnames
+    # convert category values to just numbers 0 or 1
+    for column in categories:
+    # set each value to be the last character of the string
+        categories[column] = [int(val[-1]) for val in categories[column]]
 
+    # drop the original categories column from `df`
+    df.drop('categories', axis=1, inplace=True)
+
+    # concatenate the original dataframe with the new `categories` dataframe
+    df = pd.concat([df, categories], axis=1)
+
+    # drop duplicates
+    df.drop_duplicates(inplace=True)
+
+    return df
 
 def save_data(df, database_filename):
     pass
