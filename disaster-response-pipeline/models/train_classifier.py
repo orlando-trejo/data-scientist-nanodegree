@@ -27,6 +27,7 @@ def load_data(database_filepath):
     X = df.message
     Y = df.iloc[:,4:]
     category_names = Y.columns
+    print(Y.head())
     return X, Y, category_names
 
 
@@ -46,7 +47,20 @@ def tokenize(text):
 
 
 def build_model():
-    pass
+    # build a machine learning pipeline
+    pipeline = Pipeline([
+    ('vect', CountVectorizer(tokenizer=tokenize)),
+    ('tfidf', TfidfTransformer()),
+    ('clf', MultiOutputClassifier(KNeighborsClassifier()))
+    ])
+
+    # use grid search to find better parameters
+    parameters = {
+    'clf__estimator__n_neighbors': [5, 10, 20],
+    }
+
+    cv = GridSearchCV(pipeline, param_grid=parameters)
+    return cv
 
 
 def evaluate_model(model, X_test, Y_test, category_names):
