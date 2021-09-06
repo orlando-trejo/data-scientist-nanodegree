@@ -3,6 +3,22 @@ import pandas as pd
 from sqlalchemy import create_engine
 
 def load_data(messages_filepath, categories_filepath):
+    """
+    Load the messages and categories data.
+
+    Parameters
+    ----------
+    messages_filepath : str
+        Path to messages data file.
+    categories_filepath : str
+        Pato to categories data file.
+
+    Returns
+    -------
+    dataframe
+        Merged dataframe with messages and categories data.
+
+    """
     # load messages dataset
     messages = pd.read_csv(messages_filepath)
     # load categories dataset
@@ -11,6 +27,21 @@ def load_data(messages_filepath, categories_filepath):
 
 
 def clean_data(df):
+    """
+    Clean the data by renaming the columns and categorizing into numerical
+    values.
+
+    Parameters
+    ----------
+    df : dataframe
+        Merged dataframe without processed category columns.
+
+    Returns
+    -------
+    df : dataframe
+        Merged dataframe with renamed and numerical values for category columns.
+
+    """
     # create a dataframe of the 36 individual category columns
     categories = df.categories.str.split(';', expand=True)
     # select the first row of the categories dataframe
@@ -38,6 +69,21 @@ def clean_data(df):
     return df
 
 def save_data(df, database_filename):
+    """
+    Save data to SQL db file
+
+    Parameters
+    ----------
+    df : dataframe
+        Datframe to export to db file.
+    database_filename : str
+        Name of db file including '.db'.
+
+    Returns
+    -------
+    None.
+
+    """
     engine = create_engine(f'sqlite:///{database_filename}')
     df.to_sql('disaster_response', engine, index=False)
 
