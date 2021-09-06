@@ -56,7 +56,7 @@ def build_model():
 
     # use grid search to find better parameters
     parameters = {
-    'clf__estimator__n_neighbors': [5, 10, 20],
+    'clf__estimator__n_neighbors': [5, 10],
     }
 
     cv = GridSearchCV(pipeline, param_grid=parameters)
