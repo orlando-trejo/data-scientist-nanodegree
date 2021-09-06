@@ -20,6 +20,24 @@ from sklearn.metrics import classification_report
 import pickle
 
 def load_data(database_filepath):
+    """
+    Load data from SQL db file.
+
+    Parameters
+    ----------
+    database_filepath : str
+        Path to db file.
+
+    Returns
+    -------
+    X : dataframe
+        Features (messages) dataframe.
+    Y : dataframe
+        Labels (categories) dataframe.
+    category_names : list
+        Names of the different categories.
+
+    """
     # load data from database
     engine = create_engine('sqlite:///{}'.format(database_filepath))
     df = pd.read_sql_table('disaster_response', engine)
@@ -33,6 +51,21 @@ def load_data(database_filepath):
 
 
 def tokenize(text):
+    """
+    Process text data by removing punctuation, lowering case, tokenizing words,
+    remvoing stop words, and lemmetizing.
+
+    Parameters
+    ----------
+    text : str
+        Text data of messages.
+
+    Returns
+    -------
+    tokens : list
+        List of processed word tokens for a given message.
+
+    """
     # normalize case and remove punctuation
     text = re.sub(r"[^a-zA-Z0-9]", " ", text.lower())
 
@@ -48,6 +81,15 @@ def tokenize(text):
 
 
 def build_model():
+    """
+    Build the pipeline and gridsearch for a machine learning model.
+
+    Returns
+    -------
+    cv : GridSearchCV
+        A model with a processing, classifier, and grid search piepline.
+
+    """
     # build a machine learning pipeline
     pipeline = Pipeline([
     ('vect', CountVectorizer(tokenizer=tokenize)),
@@ -65,11 +107,45 @@ def build_model():
 
 
 def evaluate_model(model, X_test, Y_test, category_names):
+    """
+    Create a classification report on a trained models for the test set.
+
+    Parameters
+    ----------
+    model : trained model
+        Trained model on processed text and categories.
+    X_test : dataframe
+        Test dataframe for features (messages).
+    Y_test : dataframe
+        Test dataframe for labels (categories).
+    category_names : list
+        List of the different categories.
+
+    Returns
+    -------
+    None.
+
+    """
     Y_pred = model.predict(X_test)
     print(classification_report(Y_test.values, Y_pred, target_names=category_names))
 
 
 def save_model(model, model_filepath):
+    """
+    Export trained and tuned model to a pkl file.
+
+    Parameters
+    ----------
+    model : Trained model
+        Trained model on processed text and categories.
+    model_filepath : str
+        File path to export pkl file.
+
+    Returns
+    -------
+    None.
+
+    """
     pickle.dump(model, open(model_filepath, 'wb'))
 
 
