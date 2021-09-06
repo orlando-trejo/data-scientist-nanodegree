@@ -26,6 +26,7 @@ def load_data(database_filepath):
     df.dropna(inplace=True)
     X = df.message
     Y = df.iloc[:,4:]
+    Y['related']=Y['related'].map(lambda x: 1 if x == 2 else x)
     category_names = Y.columns
     print(Y.head())
     return X, Y, category_names
@@ -64,7 +65,8 @@ def build_model():
 
 
 def evaluate_model(model, X_test, Y_test, category_names):
-    pass
+    Y_pred = model.predict(X_test)
+    print(classification_report(Y_test.values, Y_pred, target_names=category_names))
 
 
 def save_model(model, model_filepath):
